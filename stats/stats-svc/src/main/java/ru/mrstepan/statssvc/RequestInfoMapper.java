@@ -1,4 +1,5 @@
-package ru.mrstepan.stats_svc.model;
+package ru.mrstepan.statssvc;
+
 
 import ru.mrstepan.RequestInfoDto;
 

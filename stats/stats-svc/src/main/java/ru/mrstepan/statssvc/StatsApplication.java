@@ -1,4 +1,4 @@
-package ru.mrstepan.stats_svc;
+package ru.mrstepan.statssvc;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -12,7 +12,6 @@ public class RequestInfoDto {
     private String app;
     private String uri;
     private String ip;
-
     @PastOrPresent
     private LocalDateTime timestamp;
 }

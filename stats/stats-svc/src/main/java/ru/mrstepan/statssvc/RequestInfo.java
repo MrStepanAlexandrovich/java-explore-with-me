@@ -1,13 +1,17 @@
-package ru.mrstepan.stats_svc.model;
+package ru.mrstepan.statssvc;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import lombok.Data;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @Entity
+@Table(name = "request_info")
 public class RequestInfo {
     @Id
     private Long id;

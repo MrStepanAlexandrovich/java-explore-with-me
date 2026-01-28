@@ -1,11 +1,11 @@
-package ru.mrstepan.stats_svc;
+package ru.mrstepan.statssvc;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.mrstepan.stats_svc.model.EndpointStat;
+import ru.mrstepan.statsdto.EndpointStatDto;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -23,13 +23,13 @@ public class StatsController {
     }
 
     @GetMapping("/stats")
-    public ResponseEntity<Collection<EndpointStat>> getStats(
+    public ResponseEntity<Collection<EndpointStatDto>> getStats(
             @RequestParam LocalDateTime start,
             @RequestParam LocalDateTime end,
             @RequestParam List<String> uris,
             @RequestParam(defaultValue = "false") Boolean unique
     ) {
-        Collection<EndpointStat> endpointStats = statsService.getEndpointsStats(start, end, uris, unique);
+        Collection<EndpointStatDto> endpointStats = statsService.getEndpointsStats(start, end, uris, unique);
 
         return new ResponseEntity<>(endpointStats, HttpStatus.OK);
     }
