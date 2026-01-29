@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.mrstepan.statsdto.EndpointStatDto;
+import ru.mrstepan.statsdto.RequestInfoDto;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -18,7 +19,7 @@ public class StatsController {
 
     @PostMapping("/hit")
     @ResponseStatus(HttpStatus.CREATED)
-    public void hit(@RequestBody @Valid ru.mrstepan.RequestInfoDto requestInfoDto) {
+    public void hit(@RequestBody @Valid RequestInfoDto requestInfoDto) {
         statsService.saveRequestInfo(requestInfoDto);
     }
 

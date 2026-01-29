@@ -1,10 +1,9 @@
 package ru.mrstepan.statsсlient;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import ru.mrstepan.RequestInfoDto;
+import ru.mrstepan.statsdto.RequestInfoDto;
 import ru.mrstepan.statsdto.EndpointStatDto;
 
 import java.util.Collection;

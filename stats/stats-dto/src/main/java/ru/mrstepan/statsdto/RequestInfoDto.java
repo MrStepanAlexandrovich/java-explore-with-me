@@ -1,4 +1,4 @@
-package ru.mrstepan;
+package ru.mrstepan.statsdto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.PastOrPresent;

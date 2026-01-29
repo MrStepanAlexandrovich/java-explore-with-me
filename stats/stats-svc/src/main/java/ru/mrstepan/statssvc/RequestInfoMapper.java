@@ -1,7 +1,6 @@
 package ru.mrstepan.statssvc;
 
-
-import ru.mrstepan.RequestInfoDto;
+import ru.mrstepan.statsdto.RequestInfoDto;
 
 public class RequestInfoMapper {
     public static RequestInfo toRequestInfo(RequestInfoDto requestInfoDto) {

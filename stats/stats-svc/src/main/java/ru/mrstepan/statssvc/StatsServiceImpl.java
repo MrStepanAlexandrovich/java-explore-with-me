@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.mrstepan.statsdto.EndpointStatDto;
+import ru.mrstepan.statsdto.RequestInfoDto;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -16,7 +17,7 @@ public class StatsServiceImpl implements StatsService {
     private final StatsRepository statsRepository;
 
     @Override
-    public void saveRequestInfo(ru.mrstepan.RequestInfoDto requestInfoDto) {
+    public void saveRequestInfo(RequestInfoDto requestInfoDto) {
         log.info("Saving request. app: {}, uri: {}, ip: {}, timestamp: {}",
                 requestInfoDto.getApp(), requestInfoDto.getUri(), requestInfoDto.getIp(), requestInfoDto.getTimestamp());
         statsRepository.save(RequestInfoMapper.toRequestInfo(requestInfoDto));
