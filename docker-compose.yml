@@ -9,9 +9,12 @@ services:
   stats-db:
     image: postgres:16.1
 
-  #ewm-service:
-    #ports:
-     # - "8080:8080"
+  ewm-service:
+    build:
+      context: ./ewm-service
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
 
-  #ewm-db:
-    #image: postgres:16.1#/
+  ewm-db:
+    image: postgres:16.1
