@@ -8,6 +8,10 @@ services:
 
   stats-db:
     image: postgres:16.1
+    environment:
+      POSTGRES_DB: stats
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 8462
     ports:
       - "5432:5432"
 
