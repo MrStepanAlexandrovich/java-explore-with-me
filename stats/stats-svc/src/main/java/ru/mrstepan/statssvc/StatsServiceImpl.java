@@ -7,7 +7,6 @@ import ru.mrstepan.statsdto.EndpointStatDto;
 import ru.mrstepan.statsdto.RequestInfoDto;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
 
@@ -26,21 +25,17 @@ public class StatsServiceImpl implements StatsService {
 
     @Override
     public Collection<EndpointStatDto> getEndpointsStats(
-            String start, String end, List<String> uris, boolean unique
+            LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique
     ) {
-        LocalDateTime start1 = LocalDateTime.parse(start, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-
-        LocalDateTime end1 = LocalDateTime.parse(end, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-
         log.info("Start getting endpoints stats from {} to {} for uris: {}. Unique ips: {}",
-                start1, end1, uris, unique);
+                start, end, uris, unique);
         Collection<EndpointStatDto> endpointStats;
         if (unique) {
             log.trace("Getting stats with unique ips");
-            endpointStats = statsRepository.getStatsWithUniqueIps(start1, end1, uris);
+            endpointStats = statsRepository.getStatsWithUniqueIps(start, end, uris);
         } else {
             log.trace("Getting stats");
-            endpointStats = statsRepository.getStats(start1, end1, uris);
+            endpointStats = statsRepository.getStats(start, end, uris);
         }
 
         log.info("Got stats for {} endpoints", endpointStats.size());

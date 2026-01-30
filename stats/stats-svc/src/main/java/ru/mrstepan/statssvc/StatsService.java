@@ -10,6 +10,6 @@ import java.util.List;
 public interface StatsService {
     void saveRequestInfo(RequestInfoDto requestInfoDto);
 
-    Collection<EndpointStatDto> getEndpointsStats(String start, String end, List<String> uris,
+    Collection<EndpointStatDto> getEndpointsStats(LocalDateTime start, LocalDateTime end, List<String> uris,
                                                   boolean unique);
 }
