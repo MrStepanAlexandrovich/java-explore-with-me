@@ -18,6 +18,7 @@ public interface StatsRepository extends JpaRepository<RequestInfo, Long> {
             WHERE e.timestamp BETWEEN :start AND :end
             AND (:uris IS NULL OR e.uri IN :uris)
             GROUP BY e.app, e.uri
+            ORDER BY COUNT(*) DESC
             """)
     Collection<EndpointStatDto> getStats(
             @Param("start") LocalDateTime start,
@@ -31,6 +32,7 @@ public interface StatsRepository extends JpaRepository<RequestInfo, Long> {
            WHERE e.timestamp BETWEEN :start AND :end
            AND (:uris IS NULL OR e.uri IN :uris)
            GROUP BY e.app, e.uri
+           ORDER BY COUNT(DISTINCT e.ip) DESC
            """)
     Collection<EndpointStatDto> getStatsWithUniqueIps(
             LocalDateTime start,
