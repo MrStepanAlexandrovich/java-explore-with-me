@@ -8,6 +8,8 @@ services:
 
   stats-db:
     image: postgres:16.1
+    ports:
+      - "5432:5432"
 
   ewm-service:
     build:
