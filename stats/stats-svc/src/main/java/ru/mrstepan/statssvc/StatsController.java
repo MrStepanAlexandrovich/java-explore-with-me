@@ -27,7 +27,7 @@ public class StatsController {
     public ResponseEntity<Collection<EndpointStatDto>> getStats(
             @RequestParam LocalDateTime start,
             @RequestParam LocalDateTime end,
-            @RequestParam List<String> uris,
+            @RequestParam(required = false) List<String> uris,
             @RequestParam(defaultValue = "false") Boolean unique
     ) {
         Collection<EndpointStatDto> endpointStats = statsService.getEndpointsStats(start, end, uris, unique);
