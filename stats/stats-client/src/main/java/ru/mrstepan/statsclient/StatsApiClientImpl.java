@@ -1,4 +1,4 @@
-package ru.mrstepan.statsсlient;
+package ru.mrstepan.statsclient;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;

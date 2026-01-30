@@ -13,19 +13,19 @@ import java.util.List;
 @Repository
 public interface StatsRepository extends JpaRepository<RequestInfo, Long> {
     @Query("""
-            SELECT NEW ru.mrstepan.stats_svc.EndpointStatDto(e.app, e.uri, COUNT(*)) 
-            FROM RequestInfo e 
-            WHERE e.timestamp BETWEEN :start AND :end
-            AND e.uri IN :uris
-            GROUP BY e.app, e.uri
-            """)
+        SELECT NEW ru.mrstepan.statsdto.EndpointStatDto(e.app, e.uri, COUNT(*))
+        FROM RequestInfo e
+        WHERE e.timestamp BETWEEN :start AND :end
+        AND e.uri IN :uris
+        GROUP BY e.app, e.uri
+        """)
     Collection<EndpointStatDto> getStats(
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end,
             @Param("uris") List<String> uris
     );
 
-    @Query("SELECT NEW ru.mrstepan.stats_svc.EndpointStatDto(e.app, e.uri, COUNT(DISTINCT e.ip)) " +
+    @Query("SELECT NEW ru.mrstepan.statsdto.EndpointStatDto(e.app, e.uri, COUNT(DISTINCT e.ip)) " +
             "FROM RequestInfo e " +
             "WHERE e.timestamp BETWEEN :start AND :end " +
             "AND e.uri IN :uris " +
