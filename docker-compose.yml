@@ -1,5 +1,8 @@
 services:
   stats-server:
+    build:
+      context: ./stats/stats-svc
+      dockerfile: Dockerfile
     ports:
       - "9090:9090"
 
