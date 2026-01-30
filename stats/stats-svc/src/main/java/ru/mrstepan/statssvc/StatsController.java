@@ -1,5 +1,6 @@
 package ru.mrstepan.statssvc;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,8 +26,8 @@ public class StatsController {
 
     @GetMapping("/stats")
     public ResponseEntity<Collection<EndpointStatDto>> getStats(
-            @RequestParam LocalDateTime start,
-            @RequestParam LocalDateTime end,
+            @RequestParam String start,
+            @RequestParam String end,
             @RequestParam(required = false) List<String> uris,
             @RequestParam(defaultValue = "false") Boolean unique
     ) {
