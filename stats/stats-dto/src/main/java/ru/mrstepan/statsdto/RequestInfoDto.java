@@ -1,17 +1,16 @@
 package ru.mrstepan.statsdto;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.PastOrPresent;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
 public class RequestInfoDto {
-    @Max(255)
     private String app;
     private String uri;
     private String ip;
-    @PastOrPresent
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
 }
