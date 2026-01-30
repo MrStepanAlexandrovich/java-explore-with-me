@@ -1,3 +1,7 @@
+networks:
+  app-net:
+    driver: bridge
+
 services:
   stats-server:
     build:
@@ -5,6 +9,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "9090:9090"
+    networks:
+      - app-net
 
   stats-db:
     image: postgres:16.1
@@ -14,6 +20,8 @@ services:
       POSTGRES_PASSWORD: 8462
     ports:
       - "5432:5432"
+    networks:
+      - app-net
 
   ewm-service:
     build:
@@ -24,3 +32,6 @@ services:
 
   ewm-db:
     image: postgres:16.1
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 8462
