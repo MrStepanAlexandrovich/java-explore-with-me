@@ -1,4 +1,4 @@
-package ru.mrstepan.ewmservice.controller.unauthorized;
+package ru.mrstepan.ewmservice.controller.admin;
 
 import org.springframework.web.bind.annotation.*;
 import ru.mrstepan.ewmservice.model.Event;
@@ -8,24 +8,26 @@ import java.util.Collection;
 import java.util.List;
 
 @RestController
-@RequestMapping("/events")
+@RequestMapping("/admin/events")
 public class EventController {
+    @GetMapping
     public Collection<Event> getEvents(
-            @RequestParam List<Integer> categories,
+            @RequestParam List<Long> ids,
             @RequestParam long from,
-            @RequestParam(defaultValue = "false") boolean onlyAvailable,
-            @RequestParam boolean paid,
             @RequestParam LocalDateTime rangeEnd,
             @RequestParam LocalDateTime rangeStart,
             @RequestParam long size,
-            @RequestParam String sort,
-            @RequestParam String text
+            @RequestParam List<String> states,
+            @RequestParam List<Integer> users
     ) {
 
     }
 
-    @GetMapping("/{id}")
-    public Collection<Event> getEventById(@PathVariable("id") long id) {
+    @PatchMapping("/{id}")
+    public void editEvent(
+            @PathVariable long id,
+            @RequestBody EventEditDto eventEditDto
+    ) {
 
     }
 }
