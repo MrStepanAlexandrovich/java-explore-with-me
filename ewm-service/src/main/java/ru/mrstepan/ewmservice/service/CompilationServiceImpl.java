@@ -1,16 +1,19 @@
 package ru.mrstepan.ewmservice.service;
 
 import org.springframework.stereotype.Service;
+import ru.mrstepan.ewmservice.dto.CompilationDto;
+
+import java.util.Collection;
 
 @Service
 public class CompilationServiceImpl implements CompilationService {
     @Override
-    public void getCompilations(int from, boolean pinned, int size) {
+    public Collection<CompilationDto> getCompilations(int from, boolean pinned, int size) {
 
     }
 
     @Override
-    public void getCompilationsById(long id) {
+    public CompilationDto getCompilationById(long id) {
 
     }
 }
