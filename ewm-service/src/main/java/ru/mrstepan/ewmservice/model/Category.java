@@ -1,6 +1,11 @@
 package ru.mrstepan.ewmservice.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
+@Entity
 public class Category {
-    long id;
-    String name;
+    @Id
+    private long id;
+    private String name;
 }

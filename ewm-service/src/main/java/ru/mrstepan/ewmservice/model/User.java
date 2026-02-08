@@ -1,9 +1,11 @@
 package ru.mrstepan.ewmservice.model;
 
-import lombok.Data;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
-@Data
+@Entity
 public class User {
+    @Id
     private long id;
     private String name;
     private String email;
