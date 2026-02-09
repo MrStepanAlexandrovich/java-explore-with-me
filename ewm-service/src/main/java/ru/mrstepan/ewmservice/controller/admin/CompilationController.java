@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.mrstepan.ewmservice.dto.CompilationDto;
 import ru.mrstepan.ewmservice.dto.CompilationEditDto;
-import ru.mrstepan.ewmservice.model.Compilation;
 import ru.mrstepan.ewmservice.service.CompilationService;
 
 @RestController
