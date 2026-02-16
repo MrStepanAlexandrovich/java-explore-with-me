@@ -28,7 +28,7 @@ public class AdminCompilationController {
     }
 
     @PatchMapping("/{compId}")
-    public CompilationDto editCompilation(@PathVariable long compId, @RequestBody CompilationEditDto dto) {
+    public CompilationDto editCompilation(@PathVariable long compId, @RequestBody @Valid CompilationEditDto dto) {
         return compilationService.editCompilation(compId, dto);
     }
 }
