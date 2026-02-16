@@ -40,7 +40,7 @@ public interface EventService {
 
     // Public: поиск событий
     List<EventShortDto> getPublicEvents(String text, List<Long> categories, Boolean paid,
-                                       String rangeStart, String rangeEnd,
+                                       LocalDateTime rangeStart, LocalDateTime rangeEnd,
                                        boolean onlyAvailable, String sort, int from, int size);
 
     // Public: получить событие по id

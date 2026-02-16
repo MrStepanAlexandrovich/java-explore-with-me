@@ -1,11 +1,13 @@
 package ru.mrstepan.ewmservice.controller.unauthorized;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.mrstepan.ewmservice.dto.EventFullDto;
 import ru.mrstepan.ewmservice.dto.EventShortDto;
 import ru.mrstepan.ewmservice.service.EventService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -19,8 +21,8 @@ public class EventController {
             @RequestParam(required = false) String text,
             @RequestParam(required = false) List<Long> categories,
             @RequestParam(required = false) Boolean paid,
-            @RequestParam(required = false) String rangeStart,
-            @RequestParam(required = false) String rangeEnd,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
             @RequestParam(defaultValue = "false") boolean onlyAvailable,
             @RequestParam(required = false) String sort,
             @RequestParam(defaultValue = "0") int from,

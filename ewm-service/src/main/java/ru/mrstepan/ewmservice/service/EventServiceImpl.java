@@ -206,7 +206,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventShortDto> getPublicEvents(String text, List<Long> categories, Boolean paid,
-                                               String rangeStart, String rangeEnd,
+                                               LocalDateTime rangeStart, LocalDateTime rangeEnd,
                                                boolean onlyAvailable, String sort, int from, int size) {
         Specification<Event> spec = buildPublicSpec(text, categories, paid, rangeStart, rangeEnd, onlyAvailable);
         return eventRepository.findAll(spec, PageRequest.of(from / size, size)).stream()
@@ -270,7 +270,7 @@ public class EventServiceImpl implements EventService {
     }
 
     private Specification<Event> buildPublicSpec(String text, List<Long> categories, Boolean paid,
-                                                 String rangeStart, String rangeEnd, boolean onlyAvailable) {
+                                                 LocalDateTime rangeStart, LocalDateTime rangeEnd, boolean onlyAvailable) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
             predicates.add(cb.equal(root.get("state"), Status.PUBLISHED));
