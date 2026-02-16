@@ -38,9 +38,9 @@ public class CompilationServiceImpl implements CompilationService {
         List<Compilation> compilations;
         PageRequest page = PageRequest.of(from / size, size);
         if (pinned != null) {
-            compilations = compilationRepository.findAllByPinned(pinned, page);
+            compilations = compilationRepository.findAllByPinned(pinned);
         } else {
-            compilations = compilationRepository.findAll(page).getContent();
+            compilations = compilationRepository.findAll();
         }
         return compilations.stream()
                 .map(c -> CompilationMapper.toDto(c, buildEventShortDtoMap(c)))

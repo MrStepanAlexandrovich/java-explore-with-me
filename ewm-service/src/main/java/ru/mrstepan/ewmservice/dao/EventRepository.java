@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecificationExecutor<Event> {
-    List<Event> findAllByInitiator_Id(long userId, Pageable pageable);
+    List<Event> findAllByInitiator_Id(long userId);
 
     List<Event> findAllByCategory_Id(long categoryId);
 }

@@ -50,7 +50,7 @@ public class EventServiceImpl implements EventService {
     public List<EventShortDto> getUserEvents(long userId, int from, int size) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id=" + userId + " was not found"));
-        return eventRepository.findAllByInitiator_Id(userId, PageRequest.of(from / size, size)).stream()
+        return eventRepository.findAllByInitiator_Id(userId).stream()
                 .map(e -> EventMapper.toShortDto(e, getConfirmed(e.getId()), 0))
                 .collect(Collectors.toList());
     }
