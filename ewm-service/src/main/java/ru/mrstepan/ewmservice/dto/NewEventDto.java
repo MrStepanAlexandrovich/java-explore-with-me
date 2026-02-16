@@ -1,8 +1,8 @@
 package ru.mrstepan.ewmservice.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 import ru.mrstepan.ewmservice.model.Location;
 
 import java.time.LocalDateTime;
@@ -20,8 +20,7 @@ public class NewEventDto {
     @Size(min = 20, max = 7000)
     private String description;
 
-    @NotBlank
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
 
     @NotNull
