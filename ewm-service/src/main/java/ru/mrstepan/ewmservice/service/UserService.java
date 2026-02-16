@@ -3,7 +3,6 @@ package ru.mrstepan.ewmservice.service;
 import ru.mrstepan.ewmservice.dto.NewUserRequest;
 import ru.mrstepan.ewmservice.dto.UserDto;
 
-import java.util.Collection;
 import java.util.List;
 
 public interface UserService {
