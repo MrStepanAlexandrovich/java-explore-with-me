@@ -2,8 +2,6 @@ package ru.mrstepan.ewmservice.model;
 
 import ru.mrstepan.ewmservice.dto.RequestDto;
 
-import java.time.format.DateTimeFormatter;
-
 public class RequestMapper {
     public static RequestDto toDto(Request request) {
         return new RequestDto(
