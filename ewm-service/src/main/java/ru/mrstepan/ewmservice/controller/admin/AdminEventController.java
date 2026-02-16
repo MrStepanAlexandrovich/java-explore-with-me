@@ -1,5 +1,6 @@
 package ru.mrstepan.ewmservice.controller.admin;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.mrstepan.ewmservice.dto.EventEditDto;
@@ -28,7 +29,7 @@ public class AdminEventController {
     }
 
     @PatchMapping("/{eventId}")
-    public EventFullDto editEvent(@PathVariable long eventId, @RequestBody EventEditDto dto) {
+    public EventFullDto editEvent(@PathVariable long eventId, @RequestBody @Valid EventEditDto dto) {
         return eventService.updateAdminEvent(eventId, dto);
     }
 }

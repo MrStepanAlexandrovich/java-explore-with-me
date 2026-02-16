@@ -1,11 +1,11 @@
 package ru.mrstepan.ewmservice.model;
 
-import ru.mrstepan.ewmservice.dto.NewUserRequest;
+import ru.mrstepan.ewmservice.dto.NewUserDto;
 import ru.mrstepan.ewmservice.dto.UserDto;
 import ru.mrstepan.ewmservice.dto.UserShortDto;
 
 public class UserMapper {
-    public static User toUser(NewUserRequest dto) {
+    public static User toUser(NewUserDto dto) {
         User user = new User();
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());

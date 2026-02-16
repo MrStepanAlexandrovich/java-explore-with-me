@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.mrstepan.ewmservice.dto.NewUserRequest;
+import ru.mrstepan.ewmservice.dto.NewUserDto;
 import ru.mrstepan.ewmservice.dto.UserDto;
 import ru.mrstepan.ewmservice.service.UserService;
 
@@ -27,7 +27,7 @@ public class AdminUserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto addUser(@Valid @RequestBody NewUserRequest dto) {
+    public UserDto addUser(@Valid @RequestBody NewUserDto dto) {
         return userService.addUser(dto);
     }
 

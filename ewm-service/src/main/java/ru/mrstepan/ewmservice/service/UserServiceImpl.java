@@ -6,7 +6,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.mrstepan.ewmservice.dao.UserRepository;
-import ru.mrstepan.ewmservice.dto.NewUserRequest;
+import ru.mrstepan.ewmservice.dto.NewUserDto;
 import ru.mrstepan.ewmservice.dto.UserDto;
 import ru.mrstepan.ewmservice.exception.ConflictException;
 import ru.mrstepan.ewmservice.exception.NotFoundException;
@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto addUser(NewUserRequest dto) {
+    public UserDto addUser(NewUserDto dto) {
         try {
             User saved = userRepository.save(UserMapper.toUser(dto));
             return UserMapper.toDto(saved);
