@@ -2,6 +2,7 @@ package ru.mrstepan.ewmservice.dto;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 import ru.mrstepan.ewmservice.model.Location;
 
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ public class NewEventDto {
     private String description;
 
     @NotBlank
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
 
     @NotNull
