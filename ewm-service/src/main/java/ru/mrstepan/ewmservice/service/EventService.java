@@ -1,36 +1,47 @@
 package ru.mrstepan.ewmservice.service;
 
-import ru.mrstepan.ewmservice.dto.EventDto;
 import ru.mrstepan.ewmservice.dto.EventEditDto;
+import ru.mrstepan.ewmservice.dto.EventFullDto;
+import ru.mrstepan.ewmservice.dto.EventRequestStatusUpdateRequest;
+import ru.mrstepan.ewmservice.dto.EventRequestStatusUpdateResult;
+import ru.mrstepan.ewmservice.dto.EventShortDto;
+import ru.mrstepan.ewmservice.dto.NewEventDto;
 import ru.mrstepan.ewmservice.dto.RequestDto;
-import ru.mrstepan.ewmservice.model.Event;
 
-import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 
 public interface EventService {
 
-    Collection<EventDto> getEvents(long userId, int from, int size);
+    // Private: получение событий пользователя
+    List<EventShortDto> getUserEvents(long userId, int from, int size);
 
-    Collection<Event> getEvents(List<Long> ids, long from, LocalDateTime rangeEnd, LocalDateTime rangeStart, long size,
-                                List<String> states, List<Integer> users);
+    // Private: добавить событие
+    EventFullDto addEvent(NewEventDto dto, long userId);
 
-    Collection<Event> getEvents(List<Integer> categories, long from, LocalDateTime rangeEnd, LocalDateTime rangeStart,
-                                long size, boolean onlyAvailable, boolean paid, String sort, String text);
+    // Private: получить событие пользователя
+    EventFullDto getUserEvent(long eventId, long userId);
 
-    void addEvent(EventDto eventDto, long userId);
+    // Private: обновить событие пользователем
+    EventFullDto updateUserEvent(long userId, long eventId, EventEditDto dto);
 
-    void editRequestStatus(long eventId, long userId);
+    // Private: получить заявки на участие в событии
+    List<RequestDto> getEventRequests(long userId, long eventId);
 
-    EventDto getEvent(long eventId, long userId);
+    // Private: изменить статус заявок
+    EventRequestStatusUpdateResult changeRequestStatus(long userId, long eventId, EventRequestStatusUpdateRequest request);
 
-    EventDto getEvent(long eventId);
+    // Admin: поиск событий
+    List<EventFullDto> getAdminEvents(List<Long> users, List<String> states, List<Long> categories,
+                                     String rangeStart, String rangeEnd, int from, int size);
 
-    void editEventInfo(EventEditDto eventEditDto, long eventId, long userId);
+    // Admin: редактировать событие
+    EventFullDto updateAdminEvent(long eventId, EventEditDto dto);
 
-    void editEventInfo(long id, EventEditDto eventEditDto);
+    // Public: поиск событий
+    List<EventShortDto> getPublicEvents(String text, List<Long> categories, Boolean paid,
+                                       String rangeStart, String rangeEnd,
+                                       boolean onlyAvailable, String sort, int from, int size);
 
-    Collection<RequestDto> getRequests(long eventId, long userId);
-
+    // Public: получить событие по id
+    EventFullDto getPublicEvent(long eventId);
 }

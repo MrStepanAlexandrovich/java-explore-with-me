@@ -2,17 +2,18 @@ package ru.mrstepan.ewmservice.service;
 
 import ru.mrstepan.ewmservice.dto.CompilationDto;
 import ru.mrstepan.ewmservice.dto.CompilationEditDto;
+import ru.mrstepan.ewmservice.dto.NewCompilationDto;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface CompilationService {
-    Collection<CompilationDto> getCompilations(int from, boolean pinned, int size);
+    List<CompilationDto> getCompilations(Boolean pinned, int from, int size);
 
     CompilationDto getCompilationById(long id);
 
-    void addCompilation(CompilationDto compilationDto);
+    CompilationDto addCompilation(NewCompilationDto dto);
 
     void deleteCompilation(long id);
 
-    void editCompilation(long id, CompilationEditDto compilationEditDto);
+    CompilationDto editCompilation(long id, CompilationEditDto dto);
 }

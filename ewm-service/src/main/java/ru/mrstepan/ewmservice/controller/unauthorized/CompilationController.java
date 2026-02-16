@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.mrstepan.ewmservice.dto.CompilationDto;
 import ru.mrstepan.ewmservice.service.CompilationService;
 
-import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/compilations")
@@ -14,18 +14,16 @@ public class CompilationController {
     private final CompilationService compilationService;
 
     @GetMapping
-    public Collection<CompilationDto> getEventsCompilations(
-            @RequestParam(name = "from") int from,
-            @RequestParam(name = "pinned") boolean pinned,
-            @RequestParam(name = "size") int size
+    public List<CompilationDto> getCompilations(
+            @RequestParam(required = false) Boolean pinned,
+            @RequestParam(defaultValue = "0") int from,
+            @RequestParam(defaultValue = "10") int size
     ) {
-        return compilationService.getCompilations(from, pinned, size);
+        return compilationService.getCompilations(pinned, from, size);
     }
 
-    @GetMapping("/{id}")
-    public CompilationDto getEventsCompilationById(
-            @PathVariable("id") long id
-    ) {
-        return compilationService.getCompilationById(id);
+    @GetMapping("/{compId}")
+    public CompilationDto getCompilation(@PathVariable long compId) {
+        return compilationService.getCompilationById(compId);
     }
 }

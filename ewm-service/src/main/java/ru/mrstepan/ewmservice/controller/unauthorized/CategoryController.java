@@ -1,12 +1,11 @@
 package ru.mrstepan.ewmservice.controller.unauthorized;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.mrstepan.ewmservice.dto.CategoryDto;
 import ru.mrstepan.ewmservice.service.CategoryService;
 
-import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/categories")
@@ -15,15 +14,15 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping
-    public Collection<CategoryDto> getCategories(
-            @RequestParam(name = "from") int from,
-            @RequestParam(name = "size") int size
+    public List<CategoryDto> getCategories(
+            @RequestParam(defaultValue = "0") int from,
+            @RequestParam(defaultValue = "10") int size
     ) {
         return categoryService.getCategories(from, size);
     }
 
-    @GetMapping("/{id}")
-    public CategoryDto getCategory(@PathVariable long id) {
-        return categoryService.getCategory(id);
+    @GetMapping("/{catId}")
+    public CategoryDto getCategory(@PathVariable long catId) {
+        return categoryService.getCategory(catId);
     }
 }

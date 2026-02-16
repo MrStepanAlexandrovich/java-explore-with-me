@@ -2,12 +2,12 @@ package ru.mrstepan.ewmservice.service;
 
 import ru.mrstepan.ewmservice.dto.RequestDto;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface RequestService {
-    Collection<RequestDto> getRequests(long userId);
+    List<RequestDto> getRequests(long userId);
 
-    void addRequest(long userId, long eventId);
+    RequestDto addRequest(long userId, long eventId);
 
-    void cancelRequest(long userId, long requestId);
+    RequestDto cancelRequest(long userId, long requestId);
 }

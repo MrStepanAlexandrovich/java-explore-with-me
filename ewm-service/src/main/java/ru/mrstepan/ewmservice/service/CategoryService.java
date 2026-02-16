@@ -1,17 +1,18 @@
 package ru.mrstepan.ewmservice.service;
 
 import ru.mrstepan.ewmservice.dto.CategoryDto;
+import ru.mrstepan.ewmservice.dto.NewCategoryDto;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface CategoryService {
-    void addCategory(CategoryDto categoryDto);
+    CategoryDto addCategory(NewCategoryDto dto);
 
     void deleteCategory(long id);
 
-    void editCategory(long id, CategoryDto categoryDto);
+    CategoryDto editCategory(long id, CategoryDto dto);
 
-    Collection<CategoryDto> getCategories(int from, int size);
+    List<CategoryDto> getCategories(int from, int size);
 
     CategoryDto getCategory(long id);
 }

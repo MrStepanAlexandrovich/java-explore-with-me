@@ -2,75 +2,76 @@ package ru.mrstepan.ewmservice.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.mrstepan.ewmservice.dao.CategoryRepository;
+import ru.mrstepan.ewmservice.dao.EventRepository;
 import ru.mrstepan.ewmservice.dto.CategoryDto;
+import ru.mrstepan.ewmservice.dto.NewCategoryDto;
+import ru.mrstepan.ewmservice.exception.ConflictException;
 import ru.mrstepan.ewmservice.exception.NotFoundException;
 import ru.mrstepan.ewmservice.model.Category;
 import ru.mrstepan.ewmservice.model.CategoryMapper;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
+    private final EventRepository eventRepository;
 
     @Override
-    public void addCategory(CategoryDto categoryDto) {
-        log.info("Adding category. Name: {}", categoryDto.getName());
-        Category category = CategoryMapper.toCategory(categoryDto);
-
-        Category category1 = categoryRepository.save(category);
-
-        log.info("{} category saved. Id: {}", category1.getName(), category1.getId());
+    public CategoryDto addCategory(NewCategoryDto dto) {
+        log.info("Adding category. Name: {}", dto.getName());
+        try {
+            Category saved = categoryRepository.save(CategoryMapper.toCategory(dto));
+            log.info("Category saved. Id: {}", saved.getId());
+            return CategoryMapper.toDto(saved);
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictException("Category with name '" + dto.getName() + "' already exists");
+        }
     }
 
     @Override
     public void deleteCategory(long id) {
         log.info("Deleting category with id: {}", id);
+        if (!categoryRepository.existsById(id)) {
+            throw new NotFoundException("Category with id=" + id + " was not found");
+        }
+        if (!eventRepository.findAllByCategory_Id(id).isEmpty()) {
+            throw new ConflictException("The category is not empty");
+        }
         categoryRepository.deleteById(id);
-        log.info("Category with id: {} was deleted", id);
     }
 
     @Override
-    public void editCategory(long id, CategoryDto categoryDto) {
-        log.info("Editing category with id: {}. New name: {}", id, categoryDto.getName());
-
-        log.trace("Finding category with id: {}", id);
-        Category category = categoryRepository.findById(id).orElseThrow(
-                () -> {
-                    log.error("Category with id: {} wasn't found", id);
-                    return new NotFoundException("Category with id: " + id + " wasn't found");
-                }
-        );
-
-        log.info("Category name: {}, id: {} was found", category.getName(), category.getId());
-
-        Category category1 = CategoryMapper.toCategory(categoryDto);
-        category1.setId(id);
-
-        categoryRepository.save(category1);
+    public CategoryDto editCategory(long id, CategoryDto dto) {
+        log.info("Editing category with id: {}", id);
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Category with id=" + id + " was not found"));
+        try {
+            category.setName(dto.getName());
+            return CategoryMapper.toDto(categoryRepository.save(category));
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictException("Category with name '" + dto.getName() + "' already exists");
+        }
     }
 
     @Override
-    public Collection<CategoryDto> getCategories(int from, int size) {
-        return List.of();
+    public List<CategoryDto> getCategories(int from, int size) {
+        return categoryRepository.findAll(PageRequest.of(from / size, size)).stream()
+                .map(CategoryMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     public CategoryDto getCategory(long id) {
-        log.info("Getting category with id: {}", id);
-        Category category = categoryRepository.findById(id).orElseThrow(
-                () -> {
-                    log.error("Category with id: {} wasn't found", id);
-                    return new NotFoundException("Category with id: " + id + " wasn't found");
-                }
-        );
-
-        log.info("Category name: {}, id: {} was found", category.getName(), category.getId());
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Category with id=" + id + " was not found"));
         return CategoryMapper.toDto(category);
     }
 }

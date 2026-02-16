@@ -9,6 +9,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "9090:9090"
+    depends_on:
+      - stats-db
     networks:
       - app-net
 
@@ -29,9 +31,21 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
+    depends_on:
+      - ewm-db
+    environment:
+      DB_HOST: ewm-db
+      DB_NAME: ewm
+      DB_USER: postgres
+      DB_PASSWORD: 8462
+    networks:
+      - app-net
 
   ewm-db:
     image: postgres:16.1
     environment:
+      POSTGRES_DB: ewm
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 8462
+    networks:
+      - app-net
