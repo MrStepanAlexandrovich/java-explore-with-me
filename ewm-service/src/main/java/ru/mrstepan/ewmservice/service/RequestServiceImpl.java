@@ -69,7 +69,7 @@ public class RequestServiceImpl implements RequestService {
         request.setCreated(LocalDateTime.now());
 
         boolean needsModeration = event.getRequestModeration() != null ? event.getRequestModeration() : true;
-        if (!needsModeration || limit == 0) {
+        if (!needsModeration) {
             request.setStatus(RequestStatus.CONFIRMED);
         } else {
             request.setStatus(RequestStatus.PENDING);

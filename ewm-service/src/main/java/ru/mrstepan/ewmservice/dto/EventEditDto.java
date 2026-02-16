@@ -1,6 +1,8 @@
 package ru.mrstepan.ewmservice.dto;
 
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import ru.mrstepan.ewmservice.model.Location;
@@ -19,7 +21,7 @@ public class EventEditDto {
     private Location location;
     private Boolean paid;
 
-    @Min(1)
+    @PositiveOrZero
     private Integer participantLimit;
     private Boolean requestModeration;
     private String stateAction;
