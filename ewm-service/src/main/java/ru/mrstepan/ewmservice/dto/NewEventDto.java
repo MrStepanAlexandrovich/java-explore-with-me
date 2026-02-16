@@ -4,6 +4,8 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 import ru.mrstepan.ewmservice.model.Location;
 
+import java.time.LocalDateTime;
+
 @Data
 public class NewEventDto {
     @NotBlank
@@ -18,7 +20,7 @@ public class NewEventDto {
     private String description;
 
     @NotBlank
-    private String eventDate;
+    private LocalDateTime eventDate;
 
     @NotNull
     private Location location;

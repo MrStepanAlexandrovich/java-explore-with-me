@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import ru.mrstepan.ewmservice.model.Location;
 
+import java.time.LocalDateTime;
+
 @Data
 public class EventEditDto {
     @Size(min = 20, max = 2000)
@@ -15,7 +17,7 @@ public class EventEditDto {
     @Size(min = 20, max = 7000)
     private String description;
 
-    private String eventDate;
+    private LocalDateTime eventDate;
     private Location location;
     private Boolean paid;
 

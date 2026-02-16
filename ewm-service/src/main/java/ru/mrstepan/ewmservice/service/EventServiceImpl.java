@@ -30,7 +30,6 @@ import ru.mrstepan.ewmservice.model.Status;
 import ru.mrstepan.ewmservice.model.User;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,8 +38,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class EventServiceImpl implements EventService {
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
     private final RequestRepository requestRepository;
@@ -63,8 +60,7 @@ public class EventServiceImpl implements EventService {
         Category category = categoryRepository.findById(dto.getCategory())
                 .orElseThrow(() -> new NotFoundException("Category with id=" + dto.getCategory() + " was not found"));
 
-        LocalDateTime eventDate = LocalDateTime.parse(dto.getEventDate(), FORMATTER);
-        if (eventDate.isBefore(LocalDateTime.now().plusHours(2))) {
+        if (dto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new ConflictException("Field: eventDate. Error: должно содержать дату, которая еще не наступила. Value: " + dto.getEventDate());
         }
 
@@ -94,11 +90,10 @@ public class EventServiceImpl implements EventService {
             throw new ConflictException("Only pending or canceled events can be changed");
         }
         if (dto.getEventDate() != null) {
-            LocalDateTime eventDate = LocalDateTime.parse(dto.getEventDate(), FORMATTER);
-            if (eventDate.isBefore(LocalDateTime.now().plusHours(2))) {
+            if (dto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
                 throw new ConflictException("Field: eventDate. Error: must be in future. Value: " + dto.getEventDate());
             }
-            event.setEventDate(eventDate);
+            event.setEventDate(dto.getEventDate());
         }
         applyEventEdit(event, dto);
         if ("SEND_TO_REVIEW".equals(dto.getStateAction())) {
@@ -170,9 +165,9 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventFullDto> getAdminEvents(List<Long> users, List<String> states, List<Long> categories,
-                                             String rangeStart, String rangeEnd, int from, int size) {
+                                             LocalDateTime rangeStart, LocalDateTime rangeEnd, int from, int size) {
         Specification<Event> spec = buildAdminSpec(users, states, categories, rangeStart, rangeEnd);
-        return eventRepository.findAll(spec, PageRequest.of(from / size, size)).stream()
+        return eventRepository.findAll(spec).stream()
                 .map(e -> EventMapper.toFullDto(e, getConfirmed(e.getId()), 0))
                 .collect(Collectors.toList());
     }
@@ -188,7 +183,7 @@ public class EventServiceImpl implements EventService {
                 throw new ConflictException("Cannot publish the event because it's not in the right state: " + event.getState());
             }
             LocalDateTime checkDate = dto.getEventDate() != null
-                    ? LocalDateTime.parse(dto.getEventDate(), FORMATTER) : event.getEventDate();
+                    ? dto.getEventDate() : event.getEventDate();
             if (checkDate.isBefore(LocalDateTime.now().plusHours(1))) {
                 throw new ConflictException("Cannot publish: event date must be at least 1 hour from now");
             }
@@ -202,7 +197,7 @@ public class EventServiceImpl implements EventService {
         }
 
         if (dto.getEventDate() != null) {
-            event.setEventDate(LocalDateTime.parse(dto.getEventDate(), FORMATTER));
+            event.setEventDate(dto.getEventDate());
         }
 
         applyEventEdit(event, dto);
@@ -249,7 +244,7 @@ public class EventServiceImpl implements EventService {
     }
 
     private Specification<Event> buildAdminSpec(List<Long> users, List<String> states, List<Long> categories,
-                                                String rangeStart, String rangeEnd) {
+                                                LocalDateTime rangeStart, LocalDateTime rangeEnd) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (users != null && !users.isEmpty()) {
@@ -264,11 +259,11 @@ public class EventServiceImpl implements EventService {
             }
             if (rangeStart != null) {
                 predicates.add(cb.greaterThanOrEqualTo(root.get("eventDate"),
-                        LocalDateTime.parse(rangeStart, FORMATTER)));
+                        rangeStart));
             }
             if (rangeEnd != null) {
                 predicates.add(cb.lessThanOrEqualTo(root.get("eventDate"),
-                        LocalDateTime.parse(rangeEnd, FORMATTER)));
+                        rangeEnd));
             }
             return cb.and(predicates.toArray(new Predicate[0]));
         };
@@ -294,13 +289,13 @@ public class EventServiceImpl implements EventService {
             }
             if (rangeStart != null) {
                 predicates.add(cb.greaterThanOrEqualTo(root.get("eventDate"),
-                        LocalDateTime.parse(rangeStart, FORMATTER)));
+                        rangeStart));
             } else {
                 predicates.add(cb.greaterThan(root.get("eventDate"), LocalDateTime.now()));
             }
             if (rangeEnd != null) {
                 predicates.add(cb.lessThanOrEqualTo(root.get("eventDate"),
-                        LocalDateTime.parse(rangeEnd, FORMATTER)));
+                        rangeEnd));
             }
             return cb.and(predicates.toArray(new Predicate[0]));
         };

@@ -6,17 +6,13 @@ import ru.mrstepan.ewmservice.dto.EventShortDto;
 import ru.mrstepan.ewmservice.dto.NewEventDto;
 import ru.mrstepan.ewmservice.dto.UserShortDto;
 
-import java.time.format.DateTimeFormatter;
-
 public class EventMapper {
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
     public static Event toEvent(NewEventDto dto, Category category, User initiator) {
         Event event = new Event();
         event.setAnnotation(dto.getAnnotation());
         event.setCategory(category);
         event.setDescription(dto.getDescription());
-        event.setEventDate(java.time.LocalDateTime.parse(dto.getEventDate(), FORMATTER));
+        event.setEventDate(dto.getEventDate());
         event.setLocation(dto.getLocation());
         event.setPaid(dto.getPaid() != null ? dto.getPaid() : false);
         event.setParticipantLimit(dto.getParticipantLimit() != null ? dto.getParticipantLimit() : 0);
@@ -33,15 +29,15 @@ public class EventMapper {
         dto.setAnnotation(event.getAnnotation());
         dto.setCategory(new CategoryDto(event.getCategory().getId(), event.getCategory().getName()));
         dto.setConfirmedRequests(confirmedRequests);
-        dto.setCreatedOn(event.getCreatedOn() != null ? event.getCreatedOn().format(FORMATTER) : null);
+        dto.setCreatedOn(event.getCreatedOn() != null ? event.getCreatedOn() : null);
         dto.setDescription(event.getDescription());
-        dto.setEventDate(event.getEventDate() != null ? event.getEventDate().format(FORMATTER) : null);
+        dto.setEventDate(event.getEventDate() != null ? event.getEventDate() : null);
         dto.setId(event.getId());
         dto.setInitiator(new UserShortDto(event.getInitiator().getId(), event.getInitiator().getName()));
         dto.setLocation(event.getLocation());
         dto.setPaid(event.getPaid());
         dto.setParticipantLimit(event.getParticipantLimit());
-        dto.setPublishedOn(event.getPublishedOn() != null ? event.getPublishedOn().format(FORMATTER) : null);
+        dto.setPublishedOn(event.getPublishedOn() != null ? event.getPublishedOn() : null);
         dto.setRequestModeration(event.getRequestModeration());
         dto.setState(event.getState() != null ? event.getState().name() : null);
         dto.setTitle(event.getTitle());
@@ -54,7 +50,7 @@ public class EventMapper {
         dto.setAnnotation(event.getAnnotation());
         dto.setCategory(new CategoryDto(event.getCategory().getId(), event.getCategory().getName()));
         dto.setConfirmedRequests(confirmedRequests);
-        dto.setEventDate(event.getEventDate() != null ? event.getEventDate().format(FORMATTER) : null);
+        dto.setEventDate(event.getEventDate() != null ? event.getEventDate() : null);
         dto.setId(event.getId());
         dto.setInitiator(new UserShortDto(event.getInitiator().getId(), event.getInitiator().getName()));
         dto.setPaid(event.getPaid());

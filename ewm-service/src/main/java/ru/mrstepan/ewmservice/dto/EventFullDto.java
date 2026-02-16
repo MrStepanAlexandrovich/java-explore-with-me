@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.mrstepan.ewmservice.model.Location;
 
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,15 +14,15 @@ public class EventFullDto {
     private String annotation;
     private CategoryDto category;
     private Long confirmedRequests;
-    private String createdOn;
+    private LocalDateTime createdOn;
     private String description;
-    private String eventDate;
+    private LocalDateTime eventDate;
     private Long id;
     private UserShortDto initiator;
     private Location location;
     private Boolean paid;
     private Integer participantLimit;
-    private String publishedOn;
+    private LocalDateTime publishedOn;
     private Boolean requestModeration;
     private String state;
     private String title;

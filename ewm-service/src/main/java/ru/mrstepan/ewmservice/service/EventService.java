@@ -8,6 +8,7 @@ import ru.mrstepan.ewmservice.dto.EventShortDto;
 import ru.mrstepan.ewmservice.dto.NewEventDto;
 import ru.mrstepan.ewmservice.dto.RequestDto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EventService {
@@ -32,7 +33,7 @@ public interface EventService {
 
     // Admin: поиск событий
     List<EventFullDto> getAdminEvents(List<Long> users, List<String> states, List<Long> categories,
-                                     String rangeStart, String rangeEnd, int from, int size);
+                                      LocalDateTime rangeStart, LocalDateTime rangeEnd, int from, int size);
 
     // Admin: редактировать событие
     EventFullDto updateAdminEvent(long eventId, EventEditDto dto);
