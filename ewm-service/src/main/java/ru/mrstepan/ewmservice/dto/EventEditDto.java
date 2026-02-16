@@ -1,7 +1,5 @@
 package ru.mrstepan.ewmservice.dto;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
