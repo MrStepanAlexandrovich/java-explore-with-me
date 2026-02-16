@@ -2,6 +2,7 @@ package ru.mrstepan.ewmservice.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import ru.mrstepan.ewmservice.model.Location;
@@ -26,7 +27,9 @@ public class NewEventDto {
     private Location location;
 
     private Boolean paid = false;
-    private Integer participantLimit = 0;
+
+    @Positive
+    private Integer participantLimit;
     private Boolean requestModeration = true;
 
     @NotBlank
