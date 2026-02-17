@@ -30,9 +30,12 @@ import ru.mrstepan.ewmservice.model.RequestMapper;
 import ru.mrstepan.ewmservice.model.RequestStatus;
 import ru.mrstepan.ewmservice.model.Status;
 import ru.mrstepan.ewmservice.model.User;
+import ru.mrstepan.statsclient.StatsApiClientImpl;
+import ru.mrstepan.statsdto.EndpointStatDto;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,12 +47,13 @@ public class EventServiceImpl implements EventService {
     private final UserRepository userRepository;
     private final RequestRepository requestRepository;
     private final CategoryRepository categoryRepository;
+    private final StatsApiClientImpl statsClient;
 
     @Override
     public List<EventShortDto> getUserEvents(long userId, int from, int size) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id=" + userId + " was not found"));
-        return eventRepository.findAllByInitiator_Id(userId).stream()
+        return eventRepository.findAllByInitiator_Id(userId, PageRequest.of(from / size, size)).stream()
                 .map(e -> EventMapper.toShortDto(e, getConfirmed(e.getId()), 0))
                 .collect(Collectors.toList());
     }
@@ -169,7 +173,7 @@ public class EventServiceImpl implements EventService {
     public List<EventFullDto> getAdminEvents(List<Long> users, List<String> states, List<Long> categories,
                                              LocalDateTime rangeStart, LocalDateTime rangeEnd, int from, int size) {
         Specification<Event> spec = buildAdminSpec(users, states, categories, rangeStart, rangeEnd);
-        return eventRepository.findAll(spec).stream()
+        return eventRepository.findAll(spec, PageRequest.of(from / size, size)).stream()
                 .map(e -> EventMapper.toFullDto(e, getConfirmed(e.getId()), 0))
                 .collect(Collectors.toList());
     }
@@ -226,13 +230,32 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventFullDto getPublicEvent(long eventId) {
+    public EventFullDto getPublicEvent(long eventId, String uri) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
         if (event.getState() != Status.PUBLISHED) {
             throw new NotFoundException("Event with id=" + eventId + " was not found");
         }
-        return EventMapper.toFullDto(event, getConfirmed(eventId), 0);
+        long views = getViews(uri);
+        return EventMapper.toFullDto(event, getConfirmed(eventId), views);
+    }
+
+    private long getViews(String uri) {
+        try {
+            Collection<EndpointStatDto> stats = statsClient.getStats(
+                    LocalDateTime.of(2020, 1, 1, 0, 0),
+                    LocalDateTime.now().plusMinutes(1),
+                    List.of(uri),
+                    true
+            );
+            return stats.stream()
+                    .filter(s -> uri.equals(s.getUri()))
+                    .mapToLong(EndpointStatDto::getHits)
+                    .sum();
+        } catch (Exception e) {
+            log.warn("Failed to get views from stats service: {}", e.getMessage());
+            return 0;
+        }
     }
 
     private long getConfirmed(long eventId) {

@@ -1,5 +1,6 @@
 package ru.mrstepan.ewmservice.dao;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -10,6 +11,8 @@ import java.util.List;
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecificationExecutor<Event> {
     List<Event> findAllByInitiator_Id(long userId);
+
+    List<Event> findAllByInitiator_Id(long userId, Pageable pageable);
 
     List<Event> findAllByCategory_Id(long categoryId);
 }

@@ -44,5 +44,5 @@ public interface EventService {
                                        boolean onlyAvailable, String sort, int from, int size);
 
     // Public: получить событие по id
-    EventFullDto getPublicEvent(long eventId);
+    EventFullDto getPublicEvent(long eventId, String uri);
 }
