@@ -4,6 +4,7 @@ import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import ru.mrstepan.ewmservice.dto.EventRequestStatusUpdateResult;
 import ru.mrstepan.ewmservice.dto.EventShortDto;
 import ru.mrstepan.ewmservice.dto.NewEventDto;
 import ru.mrstepan.ewmservice.dto.RequestDto;
+import ru.mrstepan.ewmservice.exception.BadRequestException;
 import ru.mrstepan.ewmservice.exception.ConflictException;
 import ru.mrstepan.ewmservice.exception.NotFoundException;
 import ru.mrstepan.ewmservice.model.Category;
@@ -61,7 +63,7 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new NotFoundException("Category with id=" + dto.getCategory() + " was not found"));
 
         if (dto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
-            throw new ConflictException("Field: eventDate. Error: должно содержать дату, которая еще не наступила. Value: " + dto.getEventDate());
+            throw new BadRequestException("Field: eventDate. Error: должно содержать дату, которая еще не наступила. Value: " + dto.getEventDate());
         }
 
         Event event = EventMapper.toEvent(dto, category, user);
@@ -91,7 +93,7 @@ public class EventServiceImpl implements EventService {
         }
         if (dto.getEventDate() != null) {
             if (dto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
-                throw new ConflictException("Field: eventDate. Error: must be in future. Value: " + dto.getEventDate());
+                throw new BadRequestException("Field: eventDate. Error: must be in future. Value: " + dto.getEventDate());
             }
             event.setEventDate(dto.getEventDate());
         }
@@ -208,8 +210,17 @@ public class EventServiceImpl implements EventService {
     public List<EventShortDto> getPublicEvents(String text, List<Long> categories, Boolean paid,
                                                LocalDateTime rangeStart, LocalDateTime rangeEnd,
                                                boolean onlyAvailable, String sort, int from, int size) {
+        if (rangeStart != null && rangeEnd != null && rangeStart.isAfter(rangeEnd)) {
+            throw new BadRequestException("rangeStart must be before rangeEnd");
+        }
         Specification<Event> spec = buildPublicSpec(text, categories, paid, rangeStart, rangeEnd, onlyAvailable);
-        return eventRepository.findAll(spec, PageRequest.of(from / size, size)).stream()
+
+        Sort sorting = Sort.unsorted();
+        if ("EVENT_DATE".equals(sort)) {
+            sorting = Sort.by(Sort.Direction.ASC, "eventDate");
+        }
+
+        return eventRepository.findAll(spec, PageRequest.of(from / size, size, sorting)).stream()
                 .map(e -> EventMapper.toShortDto(e, getConfirmed(e.getId()), 0))
                 .collect(Collectors.toList());
     }
