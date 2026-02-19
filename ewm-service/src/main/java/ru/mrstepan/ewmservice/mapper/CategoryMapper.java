@@ -1,7 +1,8 @@
-package ru.mrstepan.ewmservice.model;
+package ru.mrstepan.ewmservice.mapper;
 
 import ru.mrstepan.ewmservice.dto.CategoryDto;
 import ru.mrstepan.ewmservice.dto.NewCategoryDto;
+import ru.mrstepan.ewmservice.model.Category;
 
 public class CategoryMapper {
     public static Category toCategory(NewCategoryDto dto) {

@@ -17,8 +17,7 @@ public class CompilationController {
     public List<CompilationDto> getCompilations(
             @RequestParam(required = false) Boolean pinned,
             @RequestParam(defaultValue = "0") int from,
-            @RequestParam(defaultValue = "10") int size
-    ) {
+            @RequestParam(defaultValue = "10") int size) {
         return compilationService.getCompilations(pinned, from, size);
     }
 

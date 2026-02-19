@@ -20,8 +20,7 @@ public class AdminUserController {
     public List<UserDto> getUsers(
             @RequestParam(required = false) List<Long> ids,
             @RequestParam(defaultValue = "0") int from,
-            @RequestParam(defaultValue = "10") int size
-    ) {
+            @RequestParam(defaultValue = "10") int size) {
         return userService.getUsers(ids, from, size);
     }
 

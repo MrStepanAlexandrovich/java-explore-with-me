@@ -16,8 +16,7 @@ public class CategoryController {
     @GetMapping
     public List<CategoryDto> getCategories(
             @RequestParam(defaultValue = "0") int from,
-            @RequestParam(defaultValue = "10") int size
-    ) {
+            @RequestParam(defaultValue = "10") int size) {
         return categoryService.getCategories(from, size);
     }
 

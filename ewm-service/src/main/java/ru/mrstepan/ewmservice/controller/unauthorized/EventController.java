@@ -30,8 +30,7 @@ public class EventController {
             @RequestParam(required = false) String sort,
             @RequestParam(defaultValue = "0") int from,
             @RequestParam(defaultValue = "10") int size,
-            HttpServletRequest request
-    ) {
+            HttpServletRequest request) {
         statsClient.hit("ewm-main-service", request.getRequestURI(), request.getRemoteAddr());
         return eventService.getPublicEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
     }

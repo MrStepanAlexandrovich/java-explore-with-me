@@ -1,10 +1,14 @@
-package ru.mrstepan.ewmservice.model;
+package ru.mrstepan.ewmservice.mapper;
 
 import ru.mrstepan.ewmservice.dto.CategoryDto;
 import ru.mrstepan.ewmservice.dto.EventFullDto;
 import ru.mrstepan.ewmservice.dto.EventShortDto;
 import ru.mrstepan.ewmservice.dto.NewEventDto;
 import ru.mrstepan.ewmservice.dto.UserShortDto;
+import ru.mrstepan.ewmservice.model.Category;
+import ru.mrstepan.ewmservice.model.Event;
+import ru.mrstepan.ewmservice.model.Status;
+import ru.mrstepan.ewmservice.model.User;
 
 public class EventMapper {
     public static Event toEvent(NewEventDto dto, Category category, User initiator) {

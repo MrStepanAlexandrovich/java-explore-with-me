@@ -1,8 +1,9 @@
-package ru.mrstepan.ewmservice.model;
+package ru.mrstepan.ewmservice.mapper;
 
 import ru.mrstepan.ewmservice.dto.NewUserDto;
 import ru.mrstepan.ewmservice.dto.UserDto;
 import ru.mrstepan.ewmservice.dto.UserShortDto;
+import ru.mrstepan.ewmservice.model.User;
 
 public class UserMapper {
     public static User toUser(NewUserDto dto) {

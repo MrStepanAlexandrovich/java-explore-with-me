@@ -1,6 +1,7 @@
-package ru.mrstepan.ewmservice.model;
+package ru.mrstepan.ewmservice.mapper;
 
 import ru.mrstepan.ewmservice.dto.RequestDto;
+import ru.mrstepan.ewmservice.model.Request;
 
 public class RequestMapper {
     public static RequestDto toDto(Request request) {

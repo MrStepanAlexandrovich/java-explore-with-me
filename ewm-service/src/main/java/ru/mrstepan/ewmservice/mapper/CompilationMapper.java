@@ -1,8 +1,10 @@
-package ru.mrstepan.ewmservice.model;
+package ru.mrstepan.ewmservice.mapper;
 
 import ru.mrstepan.ewmservice.dto.CompilationDto;
 import ru.mrstepan.ewmservice.dto.EventShortDto;
 import ru.mrstepan.ewmservice.dto.NewCompilationDto;
+import ru.mrstepan.ewmservice.model.Compilation;
+import ru.mrstepan.ewmservice.model.Event;
 
 import java.util.Map;
 import java.util.Set;

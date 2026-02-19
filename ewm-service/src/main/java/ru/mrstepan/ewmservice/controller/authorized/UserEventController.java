@@ -25,8 +25,7 @@ public class UserEventController {
     public List<EventShortDto> getUsersEvents(
             @PathVariable long userId,
             @RequestParam(defaultValue = "0") int from,
-            @RequestParam(defaultValue = "10") int size
-    ) {
+            @RequestParam(defaultValue = "10") int size) {
         return eventService.getUserEvents(userId, from, size);
     }
 
@@ -45,8 +44,7 @@ public class UserEventController {
     public EventFullDto editEventInfo(
             @PathVariable long userId,
             @PathVariable long eventId,
-            @RequestBody @Valid EventEditDto dto
-    ) {
+            @RequestBody @Valid EventEditDto dto) {
         return eventService.updateUserEvent(userId, eventId, dto);
     }
 
@@ -59,8 +57,7 @@ public class UserEventController {
     public EventRequestStatusUpdateResult editRequestStatus(
             @PathVariable long userId,
             @PathVariable long eventId,
-            @RequestBody EventRequestStatusUpdateRequest request
-    ) {
+            @RequestBody EventRequestStatusUpdateRequest request) {
         return eventService.changeRequestStatus(userId, eventId, request);
     }
 }
