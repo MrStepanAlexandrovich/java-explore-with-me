@@ -4,15 +4,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.mrstepan.ewmservice.dto.EventEditDto;
-import ru.mrstepan.ewmservice.dto.EventFullDto;
-import ru.mrstepan.ewmservice.dto.EventRequestStatusUpdateRequest;
-import ru.mrstepan.ewmservice.dto.EventRequestStatusUpdateResult;
-import ru.mrstepan.ewmservice.dto.EventShortDto;
-import ru.mrstepan.ewmservice.dto.NewEventDto;
-import ru.mrstepan.ewmservice.dto.RequestDto;
+import ru.mrstepan.ewmservice.dto.*;
+import ru.mrstepan.ewmservice.service.CommentService;
 import ru.mrstepan.ewmservice.service.EventService;
 
+import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -20,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserEventController {
     private final EventService eventService;
+    private final CommentService commentService;
 
     @GetMapping
     public List<EventShortDto> getUsersEvents(
@@ -41,10 +38,9 @@ public class UserEventController {
     }
 
     @PatchMapping("/{eventId}")
-    public EventFullDto editEventInfo(
-            @PathVariable long userId,
-            @PathVariable long eventId,
-            @RequestBody @Valid EventEditDto dto) {
+    public EventFullDto editEventInfo(@PathVariable long userId,
+                                      @PathVariable long eventId,
+                                      @RequestBody @Valid EventEditDto dto) {
         return eventService.updateUserEvent(userId, eventId, dto);
     }
 
@@ -59,5 +55,33 @@ public class UserEventController {
             @PathVariable long eventId,
             @RequestBody EventRequestStatusUpdateRequest request) {
         return eventService.changeRequestStatus(userId, eventId, request);
+    }
+
+    @GetMapping("/{eventId}/comments")
+    public Collection<CommentResponseDto> getComments(@PathVariable long userId,
+                                                      @PathVariable long eventId) {
+        return commentService.getCommentsForEvent(userId, eventId);
+    }
+
+    @PostMapping("/{eventId}/comments")
+    public CommentResponseDto addComment(@PathVariable long userId,
+                                         @PathVariable long eventId,
+                                         @RequestBody NewCommentDto commentDto) {
+        return commentService.addComment(userId, commentDto, eventId);
+    }
+
+    @PatchMapping("/{eventId}/comments/{commentId}")
+    public CommentResponseDto editComment(@PathVariable long userId,
+                                          @PathVariable long eventId,
+                                          @PathVariable long commentId,
+                                          @RequestBody NewCommentDto commentDto) {
+        return commentService.editComment(userId, eventId, commentId, commentDto);
+    }
+
+    @DeleteMapping("/{eventId}/comments/{commentId}")
+    public void deleteComment(@PathVariable long userId,
+                              @PathVariable long eventId,
+                              @PathVariable long commentId) {
+        commentService.deleteComment(userId, eventId, commentId);
     }
 }

@@ -58,3 +58,14 @@ CREATE TABLE IF NOT EXISTS compilation_events
     FOREIGN KEY (compilation_id) REFERENCES compilations (id),
     FOREIGN KEY (event_id) REFERENCES events (id)
 );
+
+CREATE TABLE IF NOT EXISTS comments
+(
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    event_id INTEGER NOT NULL,
+    created_on TIMESTAMP NOT NULL,
+    text VARCHAR NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (event_id) REFERENCES events (id)
+)
