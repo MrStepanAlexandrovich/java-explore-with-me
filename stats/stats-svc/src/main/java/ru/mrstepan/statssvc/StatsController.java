@@ -31,6 +31,9 @@ public class StatsController {
             @RequestParam(required = false) List<String> uris,
             @RequestParam(defaultValue = "false") Boolean unique
     ) {
+        if (start.isAfter(end)) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         Collection<EndpointStatDto> endpointStats = statsService.getEndpointsStats(start, end, uris, unique);
 
         return new ResponseEntity<>(endpointStats, HttpStatus.OK);
