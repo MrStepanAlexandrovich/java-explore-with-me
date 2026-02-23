@@ -66,6 +66,7 @@ CREATE TABLE IF NOT EXISTS comments
     event_id INTEGER NOT NULL,
     created_on TIMESTAMP NOT NULL,
     text VARCHAR NOT NULL,
+    edited BOOLEAN NOT NULL DEFAULT FALSE,
     FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (event_id) REFERENCES events (id)
 )

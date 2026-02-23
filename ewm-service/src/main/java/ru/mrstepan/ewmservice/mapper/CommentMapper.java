@@ -8,10 +8,11 @@ import ru.mrstepan.ewmservice.model.Comment;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public interface CommentMapper {/*
-    @Mapping(target = "authorId", expression = "java(comment.getAuthor().getId())")
-    @Mapping(target = "eventId", expression = "java(comment.getEvent().getId())")
+public interface CommentMapper {
+
+    @Mapping(target = "authorId", source = "author.id")
+    @Mapping(target = "eventId", source = "event.id")
     CommentResponseDto toCommentResponseDto(Comment comment);
 
-    List<CommentResponseDto> toCommentResponseDtoList(List<Comment> comments);*/
+    List<CommentResponseDto> toCommentResponseDtoList(List<Comment> comments);
 }

@@ -1,6 +1,7 @@
 package ru.mrstepan.ewmservice.controller.authorized;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -58,30 +59,30 @@ public class UserEventController {
     }
 
     @GetMapping("/{eventId}/comments")
-    public Collection<CommentResponseDto> getComments(@PathVariable long userId,
-                                                      @PathVariable long eventId) {
-        return commentService.getCommentsForEvent(userId, eventId);
+    public Collection<CommentResponseDto> getComments(@PathVariable @Positive long userId,
+                                                      @PathVariable @Positive long eventId) {
+        return commentService.getCommentsForEvent(eventId, userId);
     }
 
     @PostMapping("/{eventId}/comments")
-    public CommentResponseDto addComment(@PathVariable long userId,
-                                         @PathVariable long eventId,
-                                         @RequestBody NewCommentDto commentDto) {
+    public CommentResponseDto addComment(@PathVariable @Positive long userId,
+                                         @PathVariable @Positive long eventId,
+                                         @RequestBody @Valid NewCommentDto commentDto) {
         return commentService.addComment(userId, commentDto, eventId);
     }
 
     @PatchMapping("/{eventId}/comments/{commentId}")
-    public CommentResponseDto editComment(@PathVariable long userId,
-                                          @PathVariable long eventId,
-                                          @PathVariable long commentId,
-                                          @RequestBody NewCommentDto commentDto) {
+    public CommentResponseDto editComment(@PathVariable @Positive long userId,
+                                          @PathVariable @Positive long eventId,
+                                          @PathVariable @Positive long commentId,
+                                          @RequestBody @Valid NewCommentDto commentDto) {
         return commentService.editComment(userId, eventId, commentId, commentDto);
     }
 
     @DeleteMapping("/{eventId}/comments/{commentId}")
-    public void deleteComment(@PathVariable long userId,
-                              @PathVariable long eventId,
-                              @PathVariable long commentId) {
+    public void deleteComment(@PathVariable @Positive long userId,
+                              @PathVariable @Positive long eventId,
+                              @PathVariable @Positive long commentId) {
         commentService.deleteComment(userId, eventId, commentId);
     }
 }
