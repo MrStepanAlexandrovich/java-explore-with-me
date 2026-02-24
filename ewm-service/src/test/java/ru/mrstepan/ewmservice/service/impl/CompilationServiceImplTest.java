@@ -16,9 +16,11 @@ import ru.mrstepan.ewmservice.dto.CompilationDto;
 import ru.mrstepan.ewmservice.dto.CompilationEditDto;
 import ru.mrstepan.ewmservice.dto.NewCompilationDto;
 import ru.mrstepan.ewmservice.exception.NotFoundException;
+import ru.mrstepan.ewmservice.model.Category;
 import ru.mrstepan.ewmservice.model.Compilation;
 import ru.mrstepan.ewmservice.model.Event;
 import ru.mrstepan.ewmservice.model.RequestStatus;
+import ru.mrstepan.ewmservice.model.User;
 
 import java.util.HashSet;
 import java.util.List;
@@ -51,9 +53,20 @@ class CompilationServiceImplTest {
 
     @BeforeEach
     void setUp() {
+        Category category = new Category();
+        category.setId(1L);
+        category.setName("Test Category");
+
+        User initiator = new User();
+        initiator.setId(1L);
+        initiator.setName("Test User");
+
         event = new Event();
         event.setId(1L);
         event.setTitle("Test Event");
+        event.setCategory(category);
+        event.setInitiator(initiator);
+        event.setPaid(false);
 
         compilation = new Compilation();
         compilation.setId(1L);
@@ -64,7 +77,7 @@ class CompilationServiceImplTest {
         newCompilationDto = new NewCompilationDto();
         newCompilationDto.setTitle("Test Compilation");
         newCompilationDto.setPinned(false);
-        newCompilationDto.setEvents(List.of());
+        newCompilationDto.setEvents(Set.of());
     }
 
     @Test
@@ -120,18 +133,18 @@ class CompilationServiceImplTest {
 
     @Test
     void addCompilation_Success_WithEvents() {
-        newCompilationDto.setEvents(List.of(1L));
+        newCompilationDto.setEvents(Set.of(1L));
         Set<Event> events = Set.of(event);
         compilation.setEvents(events);
 
-        when(eventRepository.findAllById(List.of(1L))).thenReturn(List.of(event));
+        when(eventRepository.findAllById(Set.of(1L))).thenReturn(List.of(event));
         when(compilationRepository.save(any(Compilation.class))).thenReturn(compilation);
         when(requestRepository.countByEventIdAndStatus(anyLong(), eq(RequestStatus.CONFIRMED))).thenReturn(0L);
 
         CompilationDto result = compilationService.addCompilation(newCompilationDto);
 
         assertNotNull(result);
-        verify(eventRepository).findAllById(List.of(1L));
+        verify(eventRepository).findAllById(Set.of(1L));
     }
 
     @Test
@@ -196,7 +209,7 @@ class CompilationServiceImplTest {
     @Test
     void editCompilation_Success_UpdateEvents() {
         CompilationEditDto editDto = new CompilationEditDto();
-        editDto.setEvents(List.of(1L));
+        editDto.setEvents(Set.of(1L));
 
         Set<Event> events = Set.of(event);
         Compilation updatedCompilation = new Compilation();
@@ -206,14 +219,14 @@ class CompilationServiceImplTest {
         updatedCompilation.setEvents(events);
 
         when(compilationRepository.findById(1L)).thenReturn(Optional.of(compilation));
-        when(eventRepository.findAllById(List.of(1L))).thenReturn(List.of(event));
+        when(eventRepository.findAllById(Set.of(1L))).thenReturn(List.of(event));
         when(compilationRepository.save(any(Compilation.class))).thenReturn(updatedCompilation);
         when(requestRepository.countByEventIdAndStatus(anyLong(), eq(RequestStatus.CONFIRMED))).thenReturn(0L);
 
         CompilationDto result = compilationService.editCompilation(1L, editDto);
 
         assertNotNull(result);
-        verify(eventRepository).findAllById(List.of(1L));
+        verify(eventRepository).findAllById(Set.of(1L));
     }
 
     @Test
