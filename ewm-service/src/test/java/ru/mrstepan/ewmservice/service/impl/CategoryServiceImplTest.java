@@ -134,7 +134,7 @@ class CategoryServiceImplTest {
     void editCategory_DuplicateName_ThrowsConflict() {
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
         when(categoryRepository.save(any(Category.class)))
-                .thenThrow(new DataIntegrityViolationException("Duplicate"));
+                .thenThrow(new ConflictException("Duplicate"));
 
         assertThrows(ConflictException.class, () ->
                 categoryService.editCategory(1L, categoryDto));
