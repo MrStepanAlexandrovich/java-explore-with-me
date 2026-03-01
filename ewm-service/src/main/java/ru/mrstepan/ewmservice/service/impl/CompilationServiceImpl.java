@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class CompilationServiceImpl implements CompilationService {
     private final CompilationRepository compilationRepository;
     private final EventRepository eventRepository;
@@ -63,7 +64,6 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
-    @Transactional
     public CompilationDto addCompilation(NewCompilationDto dto) {
         log.info("Adding compilation. Title: {}, pinned: {}", dto.getTitle(), dto.getPinned());
         Set<Event> events = new HashSet<>();

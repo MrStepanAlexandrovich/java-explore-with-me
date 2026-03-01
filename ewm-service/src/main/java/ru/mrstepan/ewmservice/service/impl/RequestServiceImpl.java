@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class RequestServiceImpl implements RequestService {
     private final RequestRepository requestRepository;
     private final UserRepository userRepository;
@@ -46,7 +47,6 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    @Transactional
     public RequestDto addRequest(long userId, long eventId) {
         log.info("Adding request. userId: {}, eventId: {}", userId, eventId);
         User user = userRepository.findById(userId)
@@ -103,7 +103,6 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    @Transactional
     public RequestDto cancelRequest(long userId, long requestId) {
         log.info("Cancelling request. userId: {}, requestId: {}", userId, requestId);
         Request request = requestRepository.findById(requestId)

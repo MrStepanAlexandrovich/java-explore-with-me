@@ -1,5 +1,6 @@
 package ru.mrstepan.ewmservice.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
@@ -77,9 +79,10 @@ public class CommentServiceImpl implements CommentService {
             return new NotFoundException("User id: " + userId + " wasn't found");
         });
 
-        log.trace("User was found id: {}", userId);
-
-        log.trace("Getting event id: {}", eventId);
+        log.trace("""
+                User was found id: {}
+                Getting event id: {}
+                """, userId, eventId);
 
         eventRepository.findById(eventId).orElseThrow(() -> {
             log.error("Event id: {} wasn't found", eventId);
@@ -114,10 +117,10 @@ public class CommentServiceImpl implements CommentService {
             return new NotFoundException("User id: " + userId + " wasn't found");
         });
 
-        log.trace("User was found id: {}", userId);
-
-
-        log.trace("Getting event id: {}", eventId);
+        log.trace("""
+                User was found id: {}
+                Getting event id: {}
+                """, userId, eventId);
 
         eventRepository.findById(eventId).orElseThrow(() -> {
             log.error("Event id: {} wasn't found", eventId);
@@ -159,10 +162,10 @@ public class CommentServiceImpl implements CommentService {
             return new NotFoundException("User id: " + userId + " wasn't found");
         });
 
-        log.trace("User was found id: {}", userId);
-
-
-        log.trace("Getting event id: {}", eventId);
+        log.trace("""
+                User was found id: {}
+                Getting event id: {}
+                """, userId, eventId);
 
         eventRepository.findById(eventId).orElseThrow(() -> {
             log.error("Event id: {} wasn't found", eventId);
