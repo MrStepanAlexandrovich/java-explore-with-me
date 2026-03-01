@@ -1,5 +1,6 @@
 package ru.mrstepan.ewmservice.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final EventRepository eventRepository;
@@ -61,15 +63,16 @@ public class CategoryServiceImpl implements CategoryService {
                     log.error("Category with id={} was not found", id);
                     return new NotFoundException("Category with id=" + id + " was not found");
                 });
-        try {
-            category.setName(dto.getName());
-            Category saved = categoryRepository.save(category);
-            log.info("Category with id: {} updated", saved.getId());
-            return CategoryMapper.toDto(saved);
-        } catch (DataIntegrityViolationException e) {
+
+        if (categoryRepository.existsByNameAndIdNot(dto.getName(), id)) {
             log.error("Category with name '{}' already exists", dto.getName());
             throw new ConflictException("Category with name '" + dto.getName() + "' already exists");
         }
+
+        category.setName(dto.getName());
+        Category saved = categoryRepository.save(category);
+        log.info("Category with id: {} updated", saved.getId());
+        return CategoryMapper.toDto(saved);
     }
 
     @Override

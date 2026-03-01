@@ -1,0 +1,552 @@
+{
+	"info": {
+		"name": "EWM Comments API Tests",
+		"description": "Независимые тесты для комментариев. Каждая папка создаёт свои данные.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{ "key": "baseUrl", "value": "http://localhost:8080" }
+	],
+	"item": [
+		{
+			"name": "Comments CRUD",
+			"item": [
+				{
+					"name": "1. Create User",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set('ts', Date.now());"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('User created', function() {",
+									"    pm.response.to.have.status(201);",
+									"    pm.collectionVariables.set('userId', pm.response.json().id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"name\": \"CrudUser_{{ts}}\", \"email\": \"crud_{{ts}}@test.com\"}" },
+						"url": { "raw": "{{baseUrl}}/admin/users", "host": ["{{baseUrl}}"], "path": ["admin", "users"] }
+					}
+				},
+				{
+					"name": "2. Create Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Category created', function() {",
+									"    pm.response.to.have.status(201);",
+									"    pm.collectionVariables.set('categoryId', pm.response.json().id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"name\": \"CrudCat_{{ts}}\"}" },
+						"url": { "raw": "{{baseUrl}}/admin/categories", "host": ["{{baseUrl}}"], "path": ["admin", "categories"] }
+					}
+				},
+				{
+					"name": "3. Create Event",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var d = new Date(); d.setFullYear(d.getFullYear()+1);",
+									"pm.collectionVariables.set('eventDate', d.toISOString().replace('T',' ').substring(0,19));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Event created', function() {",
+									"    pm.response.to.have.status(201);",
+									"    pm.collectionVariables.set('eventId', pm.response.json().id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"annotation\":\"Crud test annotation {{ts}} with enough chars\",\"category\":{{categoryId}},\"description\":\"Crud description {{ts}} long enough for validation\",\"eventDate\":\"{{eventDate}}\",\"location\":{\"lat\":55.75,\"lon\":37.61},\"paid\":false,\"participantLimit\":100,\"requestModeration\":true,\"title\":\"CrudEvent_{{ts}}\"}" },
+						"url": { "raw": "{{baseUrl}}/users/{{userId}}/events", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}", "events"] }
+					}
+				},
+				{
+					"name": "Add Comment",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": { "exec": ["pm.collectionVariables.set('commentText', 'My comment ' + Date.now());"], "type": "text/javascript" }
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status 200', function() { pm.response.to.have.status(200); });",
+									"pm.test('Comment created', function() {",
+									"    var j = pm.response.json();",
+									"    pm.expect(j.id).to.exist;",
+									"    pm.expect(j.authorId).to.eql(Number(pm.collectionVariables.get('userId')));",
+									"    pm.expect(j.eventId).to.eql(Number(pm.collectionVariables.get('eventId')));",
+									"    pm.expect(j.edited).to.be.false;",
+									"    pm.collectionVariables.set('commentId', j.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"text\": \"{{commentText}}\"}" },
+						"url": { "raw": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}/comments", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}", "events", "{{eventId}}", "comments"] }
+					}
+				},
+				{
+					"name": "Get Comments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status 200', function() { pm.response.to.have.status(200); });",
+									"pm.test('Array with comments', function() {",
+									"    var j = pm.response.json();",
+									"    pm.expect(j).to.be.an('array');",
+									"    pm.expect(j.length).to.be.greaterThan(0);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": { "raw": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}/comments", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}", "events", "{{eventId}}", "comments"] }
+					}
+				},
+				{
+					"name": "Edit Comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status 200', function() { pm.response.to.have.status(200); });",
+									"pm.test('Edited flag true', function() { pm.expect(pm.response.json().edited).to.be.true; });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"text\": \"Edited comment\"}" },
+						"url": { "raw": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}/comments/{{commentId}}", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}", "events", "{{eventId}}", "comments", "{{commentId}}"] }
+					}
+				},
+				{
+					"name": "Delete Comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": { "exec": ["pm.test('Status 200', function() { pm.response.to.have.status(200); });"], "type": "text/javascript" }
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": { "raw": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}/comments/{{commentId}}", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}", "events", "{{eventId}}", "comments", "{{commentId}}"] }
+					}
+				},
+				{
+					"name": "Verify Deleted",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status 200', function() { pm.response.to.have.status(200); });",
+									"pm.test('Comment not in list', function() {",
+									"    var j = pm.response.json();",
+									"    var id = Number(pm.collectionVariables.get('commentId'));",
+									"    pm.expect(j.find(c => c.id === id)).to.be.undefined;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": { "raw": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}/comments", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}", "events", "{{eventId}}", "comments"] }
+					}
+				}
+			]
+		},
+		{
+			"name": "Boundary Conditions",
+			"item": [
+				{
+					"name": "1. Create User",
+					"event": [
+						{ "listen": "prerequest", "script": { "exec": ["pm.collectionVariables.set('ts', Date.now());"], "type": "text/javascript" } },
+						{ "listen": "test", "script": { "exec": ["pm.test('Created', function() { pm.response.to.have.status(201); pm.collectionVariables.set('userId', pm.response.json().id); });"], "type": "text/javascript" } }
+					],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"name\": \"BoundUser_{{ts}}\", \"email\": \"bound_{{ts}}@test.com\"}" },
+						"url": { "raw": "{{baseUrl}}/admin/users", "host": ["{{baseUrl}}"], "path": ["admin", "users"] }
+					}
+				},
+				{
+					"name": "2. Create Category",
+					"event": [
+						{ "listen": "test", "script": { "exec": ["pm.test('Created', function() { pm.response.to.have.status(201); pm.collectionVariables.set('categoryId', pm.response.json().id); });"], "type": "text/javascript" } }
+					],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"name\": \"BoundCat_{{ts}}\"}" },
+						"url": { "raw": "{{baseUrl}}/admin/categories", "host": ["{{baseUrl}}"], "path": ["admin", "categories"] }
+					}
+				},
+				{
+					"name": "3. Create Event",
+					"event": [
+						{ "listen": "prerequest", "script": { "exec": ["var d=new Date();d.setFullYear(d.getFullYear()+1);pm.collectionVariables.set('eventDate',d.toISOString().replace('T',' ').substring(0,19));"], "type": "text/javascript" } },
+						{ "listen": "test", "script": { "exec": ["pm.test('Created', function() { pm.response.to.have.status(201); pm.collectionVariables.set('eventId', pm.response.json().id); });"], "type": "text/javascript" } }
+					],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"annotation\":\"Bound annotation {{ts}} long enough\",\"category\":{{categoryId}},\"description\":\"Bound description {{ts}} long enough\",\"eventDate\":\"{{eventDate}}\",\"location\":{\"lat\":55.75,\"lon\":37.61},\"paid\":false,\"participantLimit\":100,\"requestModeration\":true,\"title\":\"BoundEvent_{{ts}}\"}" },
+						"url": { "raw": "{{baseUrl}}/users/{{userId}}/events", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}", "events"] }
+					}
+				},
+				{
+					"name": "Empty Text",
+					"event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200 or 400', function() { pm.expect(pm.response.code).to.be.oneOf([200,400]); });"], "type": "text/javascript" } }],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"text\": \"\"}" },
+						"url": { "raw": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}/comments", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}", "events", "{{eventId}}", "comments"] }
+					}
+				},
+				{
+					"name": "Null Text",
+					"event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200 or 400', function() { pm.expect(pm.response.code).to.be.oneOf([200,400]); });"], "type": "text/javascript" } }],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"text\": null}" },
+						"url": { "raw": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}/comments", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}", "events", "{{eventId}}", "comments"] }
+					}
+				},
+				{
+					"name": "Max Length 2200",
+					"event": [
+						{ "listen": "prerequest", "script": { "exec": ["pm.collectionVariables.set('maxText', 'A'.repeat(2200));"], "type": "text/javascript" } },
+						{ "listen": "test", "script": { "exec": ["pm.test('Status 200', function() { pm.response.to.have.status(200); });", "pm.test('Length 2200', function() { pm.expect(pm.response.json().text.length).to.eql(2200); });"], "type": "text/javascript" } }
+					],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"text\": \"{{maxText}}\"}" },
+						"url": { "raw": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}/comments", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}", "events", "{{eventId}}", "comments"] }
+					}
+				},
+				{
+					"name": "Exceeds Max 2201",
+					"event": [
+						{ "listen": "prerequest", "script": { "exec": ["pm.collectionVariables.set('tooLong', 'B'.repeat(2201));"], "type": "text/javascript" } },
+						{ "listen": "test", "script": { "exec": ["pm.test('Status 400', function() { pm.response.to.have.status(400); });"], "type": "text/javascript" } }
+					],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"text\": \"{{tooLong}}\"}" },
+						"url": { "raw": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}/comments", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}", "events", "{{eventId}}", "comments"] }
+					}
+				},
+				{
+					"name": "Single Char",
+					"event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', function() { pm.response.to.have.status(200); });", "pm.test('Text is X', function() { pm.expect(pm.response.json().text).to.eql('X'); });"], "type": "text/javascript" } }],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"text\": \"X\"}" },
+						"url": { "raw": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}/comments", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}", "events", "{{eventId}}", "comments"] }
+					}
+				},
+				{
+					"name": "Special Chars",
+					"event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', function() { pm.response.to.have.status(200); });", "pm.test('Preserved', function() { pm.expect(pm.response.json().text).to.include('<script>'); });"], "type": "text/javascript" } }],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"text\": \"<script>alert('xss')</script> \\\"quotes\\\"\"}" },
+						"url": { "raw": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}/comments", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}", "events", "{{eventId}}", "comments"] }
+					}
+				},
+				{
+					"name": "Unicode Emoji",
+					"event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', function() { pm.response.to.have.status(200); });", "pm.test('Unicode preserved', function() { pm.expect(pm.response.json().text).to.include('Привет'); });"], "type": "text/javascript" } }],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"text\": \"Привет мир! 你好 🎉🚀\"}" },
+						"url": { "raw": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}/comments", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}", "events", "{{eventId}}", "comments"] }
+					}
+				}
+			]
+		},
+		{
+			"name": "Business Logic",
+			"item": [
+				{
+					"name": "1. Create User1",
+					"event": [
+						{ "listen": "prerequest", "script": { "exec": ["pm.collectionVariables.set('ts', Date.now());"], "type": "text/javascript" } },
+						{ "listen": "test", "script": { "exec": ["pm.test('Created', function() { pm.response.to.have.status(201); pm.collectionVariables.set('userId', pm.response.json().id); });"], "type": "text/javascript" } }
+					],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"name\": \"BizUser1_{{ts}}\", \"email\": \"biz1_{{ts}}@test.com\"}" },
+						"url": { "raw": "{{baseUrl}}/admin/users", "host": ["{{baseUrl}}"], "path": ["admin", "users"] }
+					}
+				},
+				{
+					"name": "2. Create User2",
+					"event": [
+						{ "listen": "test", "script": { "exec": ["pm.test('Created', function() { pm.response.to.have.status(201); pm.collectionVariables.set('userId2', pm.response.json().id); });"], "type": "text/javascript" } }
+					],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"name\": \"BizUser2_{{ts}}\", \"email\": \"biz2_{{ts}}@test.com\"}" },
+						"url": { "raw": "{{baseUrl}}/admin/users", "host": ["{{baseUrl}}"], "path": ["admin", "users"] }
+					}
+				},
+				{
+					"name": "3. Create Category",
+					"event": [
+						{ "listen": "test", "script": { "exec": ["pm.test('Created', function() { pm.response.to.have.status(201); pm.collectionVariables.set('categoryId', pm.response.json().id); });"], "type": "text/javascript" } }
+					],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"name\": \"BizCat_{{ts}}\"}" },
+						"url": { "raw": "{{baseUrl}}/admin/categories", "host": ["{{baseUrl}}"], "path": ["admin", "categories"] }
+					}
+				},
+				{
+					"name": "4. Create Event",
+					"event": [
+						{ "listen": "prerequest", "script": { "exec": ["var d=new Date();d.setFullYear(d.getFullYear()+1);pm.collectionVariables.set('eventDate',d.toISOString().replace('T',' ').substring(0,19));"], "type": "text/javascript" } },
+						{ "listen": "test", "script": { "exec": ["pm.test('Created', function() { pm.response.to.have.status(201); pm.collectionVariables.set('eventId', pm.response.json().id); });"], "type": "text/javascript" } }
+					],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"annotation\":\"Biz annotation {{ts}} long enough\",\"category\":{{categoryId}},\"description\":\"Biz description {{ts}} long enough\",\"eventDate\":\"{{eventDate}}\",\"location\":{\"lat\":55.75,\"lon\":37.61},\"paid\":false,\"participantLimit\":100,\"requestModeration\":true,\"title\":\"BizEvent_{{ts}}\"}" },
+						"url": { "raw": "{{baseUrl}}/users/{{userId}}/events", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}", "events"] }
+					}
+				},
+				{
+					"name": "User1 Creates Comment",
+					"event": [
+						{ "listen": "test", "script": { "exec": ["pm.test('Status 200', function() { pm.response.to.have.status(200); });", "pm.test('Save', function() { var j=pm.response.json(); pm.collectionVariables.set('commentId', j.id); pm.collectionVariables.set('origText', j.text); });"], "type": "text/javascript" } }
+					],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"text\": \"User1 comment\"}" },
+						"url": { "raw": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}/comments", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}", "events", "{{eventId}}", "comments"] }
+					}
+				},
+				{
+					"name": "User2 Edit User1 Comment - 409",
+					"event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 409', function() { pm.response.to.have.status(409); });"], "type": "text/javascript" } }],
+					"request": {
+						"method": "PATCH",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"text\": \"Hacked\"}" },
+						"url": { "raw": "{{baseUrl}}/users/{{userId2}}/events/{{eventId}}/comments/{{commentId}}", "host": ["{{baseUrl}}"], "path": ["users", "{{userId2}}", "events", "{{eventId}}", "comments", "{{commentId}}"] }
+					}
+				},
+				{
+					"name": "User2 Delete User1 Comment - 409",
+					"event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 409', function() { pm.response.to.have.status(409); });"], "type": "text/javascript" } }],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": { "raw": "{{baseUrl}}/users/{{userId2}}/events/{{eventId}}/comments/{{commentId}}", "host": ["{{baseUrl}}"], "path": ["users", "{{userId2}}", "events", "{{eventId}}", "comments", "{{commentId}}"] }
+					}
+				},
+				{
+					"name": "Verify Unchanged",
+					"event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', function() { pm.response.to.have.status(200); });", "pm.test('Text unchanged', function() { var j=pm.response.json(); var c=j.find(x=>x.id===Number(pm.collectionVariables.get('commentId'))); pm.expect(c.text).to.eql(pm.collectionVariables.get('origText')); pm.expect(c.edited).to.be.false; });"], "type": "text/javascript" } }],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": { "raw": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}/comments", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}", "events", "{{eventId}}", "comments"] }
+					}
+				},
+				{
+					"name": "User1 Edits Own Comment",
+					"event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', function() { pm.response.to.have.status(200); });", "pm.test('Edited flag true', function() { pm.expect(pm.response.json().edited).to.be.true; });"], "type": "text/javascript" } }],
+					"request": {
+						"method": "PATCH",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"text\": \"User1 edited own\"}" },
+						"url": { "raw": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}/comments/{{commentId}}", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}", "events", "{{eventId}}", "comments", "{{commentId}}"] }
+					}
+				},
+				{
+					"name": "User2 Comments Same Event",
+					"event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 200', function() { pm.response.to.have.status(200); });", "pm.test('User2 author', function() { pm.expect(pm.response.json().authorId).to.eql(Number(pm.collectionVariables.get('userId2'))); });"], "type": "text/javascript" } }],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"text\": \"User2 comment\"}" },
+						"url": { "raw": "{{baseUrl}}/users/{{userId2}}/events/{{eventId}}/comments", "host": ["{{baseUrl}}"], "path": ["users", "{{userId2}}", "events", "{{eventId}}", "comments"] }
+					}
+				}
+			]
+		},
+		{
+			"name": "Error Cases",
+			"item": [
+				{
+					"name": "1. Create User",
+					"event": [
+						{ "listen": "prerequest", "script": { "exec": ["pm.collectionVariables.set('ts', Date.now());"], "type": "text/javascript" } },
+						{ "listen": "test", "script": { "exec": ["pm.test('Created', function() { pm.response.to.have.status(201); pm.collectionVariables.set('userId', pm.response.json().id); });"], "type": "text/javascript" } }
+					],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"name\": \"ErrUser_{{ts}}\", \"email\": \"err_{{ts}}@test.com\"}" },
+						"url": { "raw": "{{baseUrl}}/admin/users", "host": ["{{baseUrl}}"], "path": ["admin", "users"] }
+					}
+				},
+				{
+					"name": "2. Create Category",
+					"event": [{ "listen": "test", "script": { "exec": ["pm.test('Created', function() { pm.response.to.have.status(201); pm.collectionVariables.set('categoryId', pm.response.json().id); });"], "type": "text/javascript" } }],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"name\": \"ErrCat_{{ts}}\"}" },
+						"url": { "raw": "{{baseUrl}}/admin/categories", "host": ["{{baseUrl}}"], "path": ["admin", "categories"] }
+					}
+				},
+				{
+					"name": "3. Create Event",
+					"event": [
+						{ "listen": "prerequest", "script": { "exec": ["var d=new Date();d.setFullYear(d.getFullYear()+1);pm.collectionVariables.set('eventDate',d.toISOString().replace('T',' ').substring(0,19));"], "type": "text/javascript" } },
+						{ "listen": "test", "script": { "exec": ["pm.test('Created', function() { pm.response.to.have.status(201); pm.collectionVariables.set('eventId', pm.response.json().id); });"], "type": "text/javascript" } }
+					],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"annotation\":\"Err annotation {{ts}} long enough\",\"category\":{{categoryId}},\"description\":\"Err description {{ts}} long enough\",\"eventDate\":\"{{eventDate}}\",\"location\":{\"lat\":55.75,\"lon\":37.61},\"paid\":false,\"participantLimit\":100,\"requestModeration\":true,\"title\":\"ErrEvent_{{ts}}\"}" },
+						"url": { "raw": "{{baseUrl}}/users/{{userId}}/events", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}", "events"] }
+					}
+				},
+				{
+					"name": "Add - User Not Found",
+					"event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 404', function() { pm.response.to.have.status(404); });"], "type": "text/javascript" } }],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"text\": \"test\"}" },
+						"url": { "raw": "{{baseUrl}}/users/99999/events/{{eventId}}/comments", "host": ["{{baseUrl}}"], "path": ["users", "99999", "events", "{{eventId}}", "comments"] }
+					}
+				},
+				{
+					"name": "Add - Event Not Found",
+					"event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 404', function() { pm.response.to.have.status(404); });"], "type": "text/javascript" } }],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"text\": \"test\"}" },
+						"url": { "raw": "{{baseUrl}}/users/{{userId}}/events/99999/comments", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}", "events", "99999", "comments"] }
+					}
+				},
+				{
+					"name": "Edit - Comment Not Found",
+					"event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 404', function() { pm.response.to.have.status(404); });"], "type": "text/javascript" } }],
+					"request": {
+						"method": "PATCH",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"text\": \"test\"}" },
+						"url": { "raw": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}/comments/99999", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}", "events", "{{eventId}}", "comments", "99999"] }
+					}
+				},
+				{
+					"name": "Delete - Comment Not Found",
+					"event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 404', function() { pm.response.to.have.status(404); });"], "type": "text/javascript" } }],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": { "raw": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}/comments/99999", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}", "events", "{{eventId}}", "comments", "99999"] }
+					}
+				},
+				{
+					"name": "Get - User Not Found",
+					"event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 404', function() { pm.response.to.have.status(404); });"], "type": "text/javascript" } }],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": { "raw": "{{baseUrl}}/users/99999/events/{{eventId}}/comments", "host": ["{{baseUrl}}"], "path": ["users", "99999", "events", "{{eventId}}", "comments"] }
+					}
+				},
+				{
+					"name": "Get - Event Not Found",
+					"event": [{ "listen": "test", "script": { "exec": ["pm.test('Status 404', function() { pm.response.to.have.status(404); });"], "type": "text/javascript" } }],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": { "raw": "{{baseUrl}}/users/{{userId}}/events/99999/comments", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}", "events", "99999", "comments"] }
+					}
+				}
+			]
+		}
+	]
+}

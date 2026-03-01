@@ -43,6 +43,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
@@ -66,7 +67,6 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @Transactional
     public EventFullDto addEvent(NewEventDto dto, long userId) {
         log.info("Adding event. Title: {}, userId: {}", dto.getTitle(), userId);
         User user = userRepository.findById(userId)
@@ -108,7 +108,6 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @Transactional
     public EventFullDto updateUserEvent(long userId, long eventId, EventEditDto dto) {
         log.info("Updating event with id: {} by user with id: {}", eventId, userId);
         Event event = eventRepository.findById(eventId)
@@ -164,7 +163,6 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @Transactional
     public EventRequestStatusUpdateResult changeRequestStatus(long userId, long eventId,
                                                               EventRequestStatusUpdateRequest request) {
         log.info("Changing request status for event with id: {}. New status: {}, request ids: {}",
@@ -239,7 +237,6 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @Transactional
     public EventFullDto updateAdminEvent(long eventId, EventEditDto dto) {
         log.info("Admin updating event with id: {}", eventId);
         Event event = eventRepository.findById(eventId)
